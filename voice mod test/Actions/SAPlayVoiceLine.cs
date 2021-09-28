@@ -1,17 +1,22 @@
-﻿using Smash;
+﻿using SlapCityVoiceMod.Classes;
+using SlapCityVoiceMod.Managers;
+using Smash;
 using System.Collections.Generic;
 using System.Linq;
-using SlapCityVoiceMod.Managers;
 
 namespace SlapCityVoiceMod.Actions
 {
     class SAPlayVoiceLine : SmashAction
     {
+        private string character;
+        private Voicepack voicepack;
+
         public override void Happen(SmashCharacter sc)
         {
-            var character = SmashLoader.Instance.GetPlayer(sc.playerindex).currentlyCharacter;
+            character ??= SmashLoader.Instance.GetPlayer(sc.playerindex).currentlyCharacter;
+            voicepack ??= VoicepackManager.Instance.voicepacks.FirstOrDefault(x => x.characterId == character);
 
-            VoicepackManager.Instance.voicepacks.FirstOrDefault(x => x.characterId == character)?.Play(soundID);
+            voicepack?.Play(soundID);
         }
 
         public override Dictionary<string, object> ToDict()
