@@ -7,7 +7,7 @@ namespace SlapCityVoiceMod.Classes
     {
         public string id;
         public string path;
-        public float volume = 0.7f;
+        public float volume = 1f;
 
         public UnityEngine.AudioClip clip;
 
