@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Actions\SAPlayVoiceLine.cs" />
+    <Compile Include="SharedCoroutineStarter.cs" />
     <Compile Include="Classes\AudioGroup.cs" />
     <Compile Include="Classes\MovesetPatch.cs" />
     <Compile Include="Classes\Voicepack.cs" />

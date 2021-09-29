@@ -27,7 +27,7 @@ namespace SlapCityVoiceMod.Classes
         {
             if (loaded) return;
 
-            Plugin.Instance.StartCoroutine(LoadAllClips());
+            SharedCoroutineStarter.StartCoroutine(LoadAllClips());
         }
 
         private IEnumerator LoadAllClips()
@@ -51,7 +51,7 @@ namespace SlapCityVoiceMod.Classes
                     {
                         var tempLocation = ExtractToTempFile(clip.path, entry);
 
-                        coroutines.Add(Plugin.Instance.StartCoroutine(LoadClip(tempLocation, clip)));
+                        coroutines.Add(SharedCoroutineStarter.StartCoroutine(LoadClip(tempLocation, clip)));
                     }
                 }
             }
