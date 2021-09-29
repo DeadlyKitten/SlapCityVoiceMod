@@ -17,10 +17,8 @@ namespace SlapCityVoiceMod.Extensions
             set => _random = value;
         }
 
-        public static T GetRandomItem<T>(this IEnumerable<T> itemsEnumerable, Func<T, float> weightKey)
+        public static T GetRandomItem<T>(this IEnumerable<T> items, Func<T, float> weightKey)
         {
-            var items = itemsEnumerable.ToList();
-
             var totalWeight = items.Sum(x => weightKey(x));
             var randomWeightedIndex = (float)Random.NextDouble() * totalWeight;
             var itemWeightedIndex = 0f;
@@ -30,7 +28,7 @@ namespace SlapCityVoiceMod.Extensions
                 if (randomWeightedIndex < itemWeightedIndex)
                     return item;
             }
-            throw new ArgumentException("Collection count and weights must be greater than 0");
+            return default;
         }
 
     }
