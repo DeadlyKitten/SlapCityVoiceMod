@@ -1,10 +1,9 @@
 ﻿using HarmonyLib;
 using Newtonsoft.Json;
+using SlapCityVoiceMod.Managers;
 using Smash;
 using System.Security.Cryptography;
 using System.Text;
-using SlapCityVoiceMod.Classes;
-using SlapCityVoiceMod.Managers;
 
 namespace SlapCityVoiceMod.Patches
 {
@@ -14,31 +13,15 @@ namespace SlapCityVoiceMod.Patches
         static void Prefix(ref string moveset)
         {
             var hash = CreateMD5(moveset);
-            MovesetPatch patch = null;
 
-            for (int i = 0; i < VoicepackManager.Instance.voicepacks.Count; i++)
+            if (VoicepackManager.Instance.TryGetVoicepackFromMovesetHash(hash, out var result))
             {
-                var voicepack = VoicepackManager.Instance.voicepacks[i];
-                foreach (var movesetPatch in voicepack.movesetPatches)
-                {
-                    if (movesetPatch.hash == hash)
-                    {
-                        patch = movesetPatch;
-                        break;
-                    }
-                }
-                if (patch != null)
-                {
-                    voicepack.LoadClips();
-                    break;
-                }
+                result.voicepack.LoadClips();
+
+                var obj = JsonConvert.DeserializeObject(moveset);
+                result.patch.ApplyTo(obj);
+                moveset = JsonConvert.SerializeObject(obj);
             }
-
-            if (patch == null) return;
-
-            var obj = JsonConvert.DeserializeObject(moveset);
-            patch.patch.ApplyTo(obj);
-            moveset = JsonConvert.SerializeObject(obj);
         }
 
         static string CreateMD5(string input)

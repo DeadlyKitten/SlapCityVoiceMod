@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using SlapCityVoiceMod.Classes;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace SlapCityVoiceMod.Managers
 {
@@ -21,6 +22,8 @@ namespace SlapCityVoiceMod.Managers
         }
 
         public List<Voicepack> voicepacks = new List<Voicepack>();
+
+        private Dictionary<string, (Voicepack voicepack, JsonPatchDocument patch)> hashMatchDict;
 
         public VoicepackManager()
         {
@@ -75,6 +78,30 @@ namespace SlapCityVoiceMod.Managers
 
             stopwatch.Stop();
             Plugin.LogInfo($"Loaded {voicepacks.Count()} voice pack{(voicepacks.Count() == 1 ? "" : "s")} in {stopwatch.ElapsedMilliseconds} ms.");
+        }
+
+        public bool TryGetVoicepackFromMovesetHash(string hash, out (Voicepack voicepack, JsonPatchDocument patch) result)
+        {
+            if (hashMatchDict == null)
+            {
+                hashMatchDict = new Dictionary<string, (Voicepack voicepack, JsonPatchDocument patch)>();
+
+                foreach (var voicepack in voicepacks)
+                {
+                    foreach (var movesetPatch in voicepack.movesetPatches)
+                    {
+                        if (hashMatchDict.ContainsKey(movesetPatch.hash) && movesetPatch.patch != null) continue;
+
+                        hashMatchDict.Add(movesetPatch.hash, (voicepack, movesetPatch.patch));
+                    }
+                }
+            }
+
+            if (hashMatchDict.TryGetValue(hash, out result)) return true;
+
+            result.voicepack = null;
+            result.patch = null;
+            return false;
         }
 
         public void PlayClip(AudioClip clip, float volume)
